@@ -1,24 +1,120 @@
 
-<!doctype html><html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0f0f12">
-<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon-192.png">
-<title>Workout Tracker</title><link rel="stylesheet" href="./styles.css?v=2">
-</head><body>
+<!doctype html><html lang='en'><head>
+<meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>Workout Tracker (Single File)</title>
+<meta name='theme-color' content='#0f0f12'>
+<style>
+:root{--bg:#0f0f12;--card:#1a1b21;--text:#e9e9ee;--muted:#9aa0aa;--brand:#7c5cff;--brand-2:#32d4a4;--danger:#ff6b6b;}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+.container{max-width:760px;margin:0 auto;padding:16px 16px 96px}
+.header{position:sticky;top:0;background:linear-gradient(180deg,var(--bg),rgba(15,15,18,0.85));backdrop-filter:saturate(180%) blur(10px);z-index:10;border-bottom:1px solid #2a2c33}
+.header-inner{max-width:760px;margin:0 auto;display:flex;gap:10px;align-items:center;padding:10px 16px}
+.h-title{font-weight:700;font-size:18px;margin:0}
+.selects{display:flex;gap:8px;margin-left:auto}
+select{background:var(--card);color:var(--text);border:1px solid #2a2c33;border-radius:10px;padding:8px 10px;font-size:14px}
+.badge{display:inline-flex;align-items:center;gap:6px;background:#222432;color:#cbd5e1;border:1px solid #2a2c33;padding:4px 8px;border-radius:999px;font-size:12px}
+.section{margin:16px 0 10px;font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.card{background:var(--card);border:1px solid #2a2c33;border-radius:16px;padding:14px;margin-bottom:12px}
+.card h3{margin:0 0 4px;font-size:16px}
+.meta{color:var(--muted);font-size:12px;margin-bottom:8px}
+.sets{width:100%;border-collapse:separate;border-spacing:0 8px}
+.sets th,.sets td{padding:8px 10px;text-align:left}
+.sets thead th{color:#cbd5e1;font-size:12px;font-weight:600}
+.row{background:#14151b;border:1px solid #2a2c33;border-radius:10px}
+.row td:first-child{border-top-left-radius:10px;border-bottom-left-radius:10px}
+.row td:last-child{border-top-right-radius:10px;border-bottom-right-radius:10px}
+input[type=number]{width:100%;background:#0f1016;border:1px solid #2a2c33;color:var(--text);border-radius:8px;padding:8px 10px;font-size:14px;outline:none}
+input[type=checkbox]{width:20px;height:20px;accent-color:var(--brand)}
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.btn{background:#232635;border:1px solid #2a2c33;color:#dbe0ea;font-weight:600;border-radius:10px;padding:8px 10px;font-size:12px;cursor:pointer}
+.btn:hover{border-color:#3a3e49}
+.btn.brand{background:linear-gradient(135deg,var(--brand),#a88bff);color:white;border:0}
+.btn.green{background:linear-gradient(135deg,var(--brand-2),#7ce3bf);color:#0b1110;border:0}
+.btn.danger{background:linear-gradient(135deg,var(--danger),#ffa9a9);color:white;border:0}
+.footer{position:fixed;left:0;right:0;bottom:0;background:linear-gradient(0deg,var(--bg),rgba(15,15,18,0.85));backdrop-filter:blur(10px);border-top:1px solid #2a2c33}
+.footer-inner{max-width:760px;margin:0 auto;display:flex;gap:8px;align-items:center;justify-content:space-between;padding:10px 16px}
+.progress{display:flex;align-items:center;gap:10px;color:#cbd5e1;font-size:12px}
+hr.sep{border:0;border-top:1px dashed #2a2c33;margin:14px 0}
+@media (max-width:520px){
+  .sets thead{display:none}
+  .row{display:grid;grid-template-columns:1fr 1fr 44px;gap:8px;padding:8px}
+  .row td{padding:0}
+  .row td:nth-child(1){grid-column:1/4}
+  .row td:nth-child(2){grid-column:1/2}
+  .row td:nth-child(3){grid-column:2/3}
+  .row td:nth-child(4){grid-column:3/4;display:flex;align-items:center;justify-content:center}
+}
+</style>
+</head>
+<body>
 <header class="header"><div class="header-inner">
 <h1 class="h-title">Workout Tracker</h1>
 <div class="selects"><select id="week" aria-label="Select week"></select><select id="day" aria-label="Select day"></select></div>
-<button id="installBtn" class="btn brand" style="display:none;margin-left:8px;">Install</button>
 </div></header>
-<div class="container"><div class="badge" id="headerTitle">Week 1 • Day 1</div><hr class="sep"/><div id="content"></div></div>
-<footer class="footer"><div class="footer-inner">
-<div class="progress">
-  <div style="width:36px;height:36px;border-radius:50%;background:conic-gradient(#7c5cff 0deg,#2a2c33 0);display:grid;place-items:center" id="progressBar">
-    <div style="width:24px;height:24px;border-radius:50%;background:#0f0f12;display:grid;place-items:center"><span id="progressPct" style="font-size:10px;color:#cbd5e1">0%</span></div>
-  </div>
-  <div id="progressText">Sets completed: 0/0</div>
+<div class="container">
+  <div class="badge" id="headerTitle">Week 1 • Day 1</div>
+  <hr class="sep"/>
+  <div id="content"></div>
 </div>
-<a class="btn" href="#" onclick="localStorage.removeItem('workout-tracker-v1'); location.reload(); return false;">Reset All</a>
+<footer class="footer"><div class="footer-inner">
+  <div class="progress">
+    <div style="width:36px;height:36px;border-radius:50%;background:conic-gradient(#7c5cff 0deg,#2a2c33 0);display:grid;place-items:center" id="progressBar">
+      <div style="width:24px;height:24px;border-radius:50%;background:#0f0f12;display:grid;place-items:center"><span id="progressPct" style="font-size:10px;color:#cbd5e1">0%</span></div>
+    </div>
+    <div id="progressText">Sets completed: 0/0</div>
+  </div>
+  <a class="btn" href="#" onclick="localStorage.removeItem('workout-tracker-v1'); location.reload(); return false;">Reset All</a>
 </div></footer>
-<script src="./app.js?v=2"></script>
+<script>
+const WEEK1={1:{title:"Chest & Shoulders",blocks:[{tag:"CHEST",items:[{name:"Barbell Bench Press",sets:4,reps:[8,12],goal:"155 lbs"},{name:"Dumbbell Bench Press (flat)",sets:3,reps:[8,12],goal:"50s"},{name:"Incline Barbell Press",sets:3,reps:[8,12],goal:"135 lbs"}]},{tag:"SHOULDERS",items:[{name:"Dumbbell Overhead Press",sets:4,reps:[8,12],goal:"45s"},{name:"Dumbbell Lateral Raise",sets:3,reps:[8,12],goal:"25s"}]}]},2:{title:"Arms & Abs (Biceps)",blocks:[{tag:"BICEPS",items:[{name:"Barbell Curl",sets:4,reps:[8,12],goal:"55 lbs"},{name:"Dumbbell Curl (alt)",sets:3,reps:[8,12],goal:"35s"},{name:"Hammer Curl",sets:3,reps:[8,12],goal:"35s"}]},{tag:"TRICEPS",items:[{name:"Rope Triceps Extension",sets:3,reps:[8,12],goal:"40 lbs"}]},{tag:"ABS",items:[{name:"Incline Crunch",sets:3,reps:[25,25],goal:"10 lbs"},{name:"Hanging Knee Raise",sets:3,reps:[25,25],goal:"BW"}]}]},3:{title:"Shoulders & Back",blocks:[{tag:"BACK",items:[{name:"Barbell Row",sets:4,reps:[8,12],goal:"115 lbs"},{name:"Dumbbell Row",sets:3,reps:[8,12],goal:"55s"},{name:"Lat Pulldown",sets:3,reps:[8,12],goal:"120 lbs"},{name:"Pull-Ups",sets:3,reps:[7,10],goal:"BW"}]},{tag:"SHOULDERS",items:[{name:"Dumbbell Overhead Press",sets:3,reps:[8,12],goal:"45s"},{name:"Dumbbell Lateral Raise",sets:3,reps:[8,12],goal:"25s"}]}]},4:{title:"Arms & Abs (Triceps)",blocks:[{tag:"TRICEPS",items:[{name:"Rope Triceps Extension",sets:4,reps:[8,12],goal:"40 lbs"},{name:"Dips",sets:3,reps:[12,15],goal:"BW"},{name:"Overhead DB Triceps Ext.",sets:3,reps:[8,12],goal:"35s"}]},{tag:"BICEPS",items:[{name:"Barbell Curl",sets:3,reps:[8,12],goal:"55 lbs"},{name:"Dumbbell Curl",sets:3,reps:[8,12],goal:"35s"}]},{tag:"ABS",items:[{name:"Hanging Knee Raise",sets:3,reps:[25,25],goal:"BW"},{name:"Weighted Crunch",sets:3,reps:[25,25],goal:"10 lbs"}]}]},5:{title:"Quads & Abs",blocks:[{tag:"QUADS",items:[{name:"Barbell Squat",sets:4,reps:[8,12],goal:"135 lbs"},{name:"Hex Bar Squat",sets:4,reps:[8,12],goal:"155 lbs"},{name:"Dumbbell Step-Ups (bench)",sets:3,reps:[8,12],goal:"35s"}]},{tag:"ABS",items:[{name:"Incline Crunch",sets:3,reps:[25,25],goal:"10 lbs"},{name:"Hanging Knee Raise",sets:3,reps:[25,25],goal:"BW"}]}]}};
+const PLAN={}; for(let w=1;w<=6;w++){ PLAN[w]=JSON.parse(JSON.stringify(WEEK1)); }
+const $=s=>document.querySelector(s), el=(t,c,txt)=>{const e=document.createElement(t); if(c) e.className=c; if(txt) e.textContent=txt; return e;};
+const KEY='workout-tracker-v1'; function load(){try{return JSON.parse(localStorage.getItem(KEY))||{};}catch(e){return{};}} function save(s){localStorage.setItem(KEY,JSON.stringify(s));}
+let STATE=load(); if(STATE.selectedWeek==null) STATE.selectedWeek=1; if(STATE.selectedDay==null) STATE.selectedDay=1;
+const setKey=(w,d,n,s)=>`${w}-${d}-${n}-S${s}`;
+function build(){
+  $('#week').value=STATE.selectedWeek; $('#day').value=STATE.selectedDay;
+  $('#headerTitle').textContent=`Week ${STATE.selectedWeek} • Day ${STATE.selectedDay} — ${PLAN[STATE.selectedWeek][STATE.selectedDay].title}`;
+  const wrap=$('#content'); wrap.innerHTML='';
+  PLAN[STATE.selectedWeek][STATE.selectedDay].blocks.forEach(block=>{
+    wrap.appendChild(el('div','section',block.tag));
+    block.items.forEach(item=>{
+      const card=el('div','card'); card.appendChild(el('h3',null,item.name));
+      card.appendChild(el('div','meta',`Target: ${item.reps[0]}–${item.reps[1]} reps • Goal: ${item.goal}`));
+      const table=el('table','sets'); const thead=el('thead'); const trh=el('tr'); ['Set','Weight','Reps','Log'].forEach(h=>trh.appendChild(el('th',null,h))); thead.appendChild(trh); table.appendChild(thead);
+      const tbody=el('tbody');
+      for(let s=1;s<=item.sets;s++){
+        const tr=el('tr','row'); const tdSet=el('td',null,`#${s}`);
+        const tdW=el('td'); const wI=el('input'); wI.type='number'; wI.placeholder=item.goal.replace(/[^\d.]/g,'');
+        const tdR=el('td'); const rI=el('input'); rI.type='number'; rI.placeholder=item.reps[1];
+        const tdC=el('td'); const cb=el('input'); cb.type='checkbox';
+        const k=setKey(STATE.selectedWeek,STATE.selectedDay,item.name,s); const sv=STATE[k]||{};
+        if(sv.w!=null) wI.value=sv.w; if(sv.r!=null) rI.value=sv.r; if(sv.c===true) cb.checked=true;
+        wI.addEventListener('input',()=>{STATE[k]=STATE[k]||{};STATE[k].w=parseFloat(wI.value||'');save(STATE);});
+        rI.addEventListener('input',()=>{STATE[k]=STATE[k]||{};STATE[k].r=parseFloat(rI.value||'');save(STATE);});
+        cb.addEventListener('change',()=>{STATE[k]=STATE[k]||{};STATE[k].c=cb.checked;save(STATE);updateProgress();});
+        tdW.appendChild(wI); tdR.appendChild(rI); tdC.appendChild(cb);
+        tr.appendChild(tdSet); tr.appendChild(tdW); tr.appendChild(tdR); tr.appendChild(tdC);
+        tbody.appendChild(tr);
+      }
+      table.appendChild(tbody); card.appendChild(table);
+      const ctrls=el('div','controls'); const copy=el('button','btn green','Copy Last Week Weights'); copy.addEventListener('click',()=>copyLastWeek(item));
+      const mark=el('button','btn brand','Mark All Complete'); mark.addEventListener('click',()=>markAll(item,true));
+      const clear=el('button','btn danger','Clear Day'); clear.addEventListener('click',clearDay);
+      ctrls.appendChild(copy); ctrls.appendChild(mark); ctrls.appendChild(clear); card.appendChild(ctrls);
+      wrap.appendChild(card);
+    });
+  });
+  updateProgress();
+}
+function updateProgress(){const cbs=[...document.querySelectorAll('input[type=checkbox]')]; const done=cbs.filter(x=>x.checked).length; const total=cbs.length||1;
+  document.getElementById('progressText').textContent=`Sets completed: ${done}/${total}`; const pct=Math.round((done/total)*100);
+  document.getElementById('progressBar').style.background=`conic-gradient(var(--brand) ${pct*3.6}deg, #2a2c33 0)`; document.getElementById('progressPct').textContent=pct+'%';}
+function markAll(item,val){for(let s=1;s<=item.sets;s++){const k=setKey(STATE.selectedWeek,STATE.selectedDay,item.name,s);STATE[k]=STATE[k]||{};STATE[k].c=val;} save(STATE); build();}
+function clearDay(){if(!confirm('Clear all logged values and checkmarks for this day?'))return; const day=PLAN[STATE.selectedWeek][STATE.selectedDay];
+  day.blocks.forEach(b=>b.items.forEach(it=>{for(let s=1;s<=it.sets;s++){const k=setKey(STATE.selectedWeek,STATE.selectedDay,it.name,s); delete STATE[k];}})); save(STATE); build();}
+function copyLastWeek(item){if(STATE.selectedWeek<=1){alert('No previous week to copy from.'); return;} for(let s=1;s<=item.sets;s++){const prev=setKey(STATE.selectedWeek-1,STATE.selectedDay,item.name,s); const cur=setKey(STATE.selectedWeek,STATE.selectedDay,item.name,s); const pv=STATE[prev];
+  if(pv && pv.w!=null){STATE[cur]=STATE[cur]||{}; STATE[cur].w=pv.w;}} save(STATE); build();}
+window.addEventListener('DOMContentLoaded',()=>{const wk=$('#week'),dy=$('#day'); wk.innerHTML='';dy.innerHTML=''; for(let i=1;i<=6;i++){const o=document.createElement('option'); o.value=i;o.text=`Week ${i}`; wk.appendChild(o);} for(let i=1;i<=5;i++){const o=document.createElement('option'); o.value=i;o.text=`Day ${i}`; dy.appendChild(o);} wk.addEventListener('change',e=>{STATE.selectedWeek=parseInt(e.target.value,10); save(STATE); build();}); dy.addEventListener('change',e=>{STATE.selectedDay=parseInt(e.target.value,10); save(STATE); build();}); build();});
+</script>
 </body></html>
